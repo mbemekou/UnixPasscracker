@@ -9,7 +9,7 @@ Python 2.7.x
 
 Install
 apt-get -y install git
-https://github.com/mbemekou/UnixPasscracker.git
+https://github.com/mbemekou/ZipFileCracker.git
 cd ./UnixPasscracker
 chmod +x UnixPasscracker.py
 Use
