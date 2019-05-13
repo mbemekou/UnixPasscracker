@@ -12,7 +12,7 @@ Install:
 
 apt-get -y install git
 
-git clone https://github.com/mbemekou/ZipFileCracker.git        </br>
+git clone https://github.com/mbemekou/UnixPasscracker.git        </br>
 
 cd ./UnixPasscracker
 
