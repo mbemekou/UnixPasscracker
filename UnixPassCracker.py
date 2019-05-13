@@ -11,34 +11,34 @@ global threads
 global shadow_file
 global words
 global lines
+global found
+found=[]
 class UnixCrack(Thread):
 	def __init__(self,word,salted_digest):
 		Thread.__init__(self)
 		try:
 			self.word=word.strip('\n')
 			self.salted_digest=salted_digest
-			self.found=""
 		except Exception, e:
 			print e
 
 	def run(self):
 		global i
+		global found
 		try:
 			salt="$6$"+self.salted_digest.split("$")[2]
 			salted_digest_word=crypt.crypt(self.word,salt)
 			
 			if salted_digest_word == self.salted_digest:
-				sys.stdout.write('\r'+'                                                  ')
-				sys.stdout.flush()
-				print (colored("\n[+] password found :"+self.word+"\n","green"))
-				sys.stdout.flush()
-				self.found="trouver"
+				found=self.word
+				i=i-1
 				return 
 			else:
-				i=i-1
-				sys.stdout.write('\r'+self.word+'                ')
-				sys.stdout.flush()
-				return
+				if(not len(found)):
+					i=i-1
+					sys.stdout.write('\r'+self.word+'                ')
+					sys.stdout.flush()
+					return
 
 		except KeyboardInterrupt:
 			print "Ctrl+C has been pressed"
@@ -75,8 +75,10 @@ example: ./UnixPassCracker.py -w /usr/share/wordlist/rockyou.txt -f /etc/shadow 
         ''','green'))
 def launcher_thread(words,lines,threads):
 	global i
+	global found
 	for line in lines:
 		if (":" in line) & ( "$6$" in line):
+			
 			user=line.split(":")[0]
 			salted_digest=line.split(":")[1].strip(" ")
 			print "\n\ncracking password for user: "+user
@@ -90,19 +92,21 @@ def launcher_thread(words,lines,threads):
 						i=i+1
 						thread=UnixCrack(word,salted_digest)
 						thread.start()
-						if(thread.found =="trouver"):
-							j=1
+						thread.join()
+						if(len(found)):
+							sys.stdout.write("\r                  \n")
+							print(colored("[+] password found: "+found,"green"))
 							break
 
 				except KeyboardInterrupt:
 					print "Ctrl+C has been pressed"
 					sys.exit()
-				thread.join()
-			if(j!=1):
+				
+			if(not len(found)):
 				sys.stdout.write('\r'+'                                ')
-				sys.stdout.flush()
 				print (colored("\n[-]password not found\n", "red"))
-				sys.stdout.flush()
+		found=[]
+
 	return
 
 def start(argv):
