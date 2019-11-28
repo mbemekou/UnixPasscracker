@@ -10,9 +10,17 @@ Python 2.7.x
 
 Install:
 
-apt-get -y install git
+sudo apt-get -y install git python-pip
 
 git clone https://github.com/mbemekou/UnixPasscracker.git        </br>
+
+pip install termcolor
+
+pip install threading
+
+pip install crypt
+
+pip install getopt
 
 cd ./UnixPasscracker
 
